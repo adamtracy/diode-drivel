@@ -3,8 +3,8 @@ var lowFreqEnergy = 0;
 var smoothedEnergy = 0; // Holds the smoothed energy value
 var hue = 0.2;
 var smoothingFactor = 0.1; // Adjust to control the smoothing effect
-var threshold = 0.05; // Minimum energy threshold to activate higher brightness
-var defaultBrightness = 0.02; // Reduced default low brightness when under threshold
+var threshold = 0.02; // Minimum energy threshold to activate higher brightness
+var defaultBrightness = 0.03; // Reduced default low brightness when under threshold
 
 export function beforeRender(delta) {
     lowFreqEnergy = 0;
