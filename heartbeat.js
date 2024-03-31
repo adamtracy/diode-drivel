@@ -14,7 +14,7 @@ export function beforeRender(delta) {
 }
 
 export function render(index) {
-    if (index < ring1Count) {
+    if (index > ring1Count) { 
         // Inner ring
         hsv(magenta, 1, globalInnerBrightness);
     } else {
