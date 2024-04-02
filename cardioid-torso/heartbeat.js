@@ -15,13 +15,13 @@ ring2End = ring2Start + innerRingCnt;
 ring3Start = ring2End + 1;
 ring3End =  ring3Start + outerRingCnt;
 ring4Start = ring3End + 1;
-ring4End = ring4Start + innerRingCnt;
+ring4End = ring4Start + innerRingCnt; 
 
 var magenta = 0.2;
 
-export function beforeRender(delta) {
+export function beforeRender(delta) { 
     // Current time in the beat cycle
-    var currentTime = time(0.015) // 0.015 is about 1s
+    var currentTime = time(0.0075) // 0.015 is about 60bpm // .0075 is like 120bpm rhythm.
     // Normalize time to a 0-1 range for a complete cycle
     var phase = (currentTime % beatInterval) / beatInterval;
     
