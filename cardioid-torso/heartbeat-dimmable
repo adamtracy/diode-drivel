@@ -1,7 +1,10 @@
 // using a BOJACK potentiometer P/N: B10K, RSTC: 10KOhm, Power: 500mW wired into the 5th pole
-// of the analog input array (along with grnd + 3.3v out).  Seems to work, however the 
-// brightness appears to be quite nonlinear via the arc of the dial.  possibly need some sort of
-// log operator to attenuate the dimmer a bit more.
+// of the analog input array (along with grnd + 3.3v out).  At first, the linear processing yielded
+// a very small range of motion in the dial had too much effect.  GPT noted: "Human perception of brightness 
+// is logarithmic, meaning equal increments in light intensity are not perceived as equal increments in 
+// brightness. You might want to apply a gamma correction to bright_factor to linearize the perception 
+// of brightness changes
+
 
 export var frequencyData;
 //export var brightness = 0;
@@ -32,12 +35,18 @@ export function beforeRender(delta) {
     var currentTime = time(0.015) // 0.015 is about 60bpm // .0075 is like 120bpm rhythm.
     // Normalize time to a 0-1 range for a complete cycle
     var phase = (currentTime % beatInterval) / beatInterval;
-    potentiometer_input = analogInputs[4];
-    bright_factor = 1.0 - potentiometer_input;
+    
+    var potentiometer_input = analogInputs[4];
+    // invert analog input b/c max resistance is all the way over to the left on dial
+    var bright_factor = 1.0 - potentiometer_input;
+
+    // GPT originally suggested Math.pow(bright_factor, gamma);, but htat function is not available on pixel 
+    // Approximating a power function using multiples and square roots. Approximation for cube root
+    var gammaCorrectedBrightness = bright_factor * sqrt(bright_factor); 
     
     // Calculate the brightness for each ring using sin and cos to create the phase offset
-    globalInnerBrightness = (cos(phase * 2 * PI) + 1) / 2 * bright_factor; // Cosine for inner ring
-    globalOuterBrightness = (sin(phase * 2 * PI) + 1) / 2 * bright_factor; // Sine for outer ring
+    globalInnerBrightness = (cos(phase * 2 * PI) + 1) / 2 * gammaCorrectedBrightness; // Cosine for inner ring
+    globalOuterBrightness = (sin(phase * 2 * PI) + 1) / 2 * gammaCorrectedBrightness; // Sine for outer ring
 }
 
 export function render(index) {
