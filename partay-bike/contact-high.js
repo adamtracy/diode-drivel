@@ -1,3 +1,7 @@
+// 2 different programs selected based on the what the potentiometer
+// input is set to.
+//
+//
 // for input via potentiometer wired into sensor input board
 export var analogInputs; 
 export var frequencyData;
@@ -9,12 +13,20 @@ export var globalHue = 0.2;
 export var cycleColor = true;
 
 var lowFreqEnergy = 0;
-var smoothedEnergy = 0; // Holds the smoothed energy value
+export var smoothedEnergy = 0; // Holds the smoothed energy value
 export var hue = globalHue;
 var smoothingFactor = 0.1; // Adjust to control the smoothing effect
 var threshold = 0.02; // Minimum energy threshold to activate higher brightness
 var defaultBrightness = 0.03; // Reduced default low brightness when under threshold
 var elapsedTime = 0; // Manually incremented time variable
+
+// heart stuff
+var beatInterval = 1.0; // Time in seconds for one heartbeat cycle
+var timeFactor = 0.015;  // 0.015 is about 60bpm // .0075 is like 120bpm rhythm.
+export var heartBrightness = 0.1;
+
+
+var selectedProgram = 0; // Variable to store the selected program
 
 export function beforeRender(delta) {
     lowFreqEnergy = 0;
@@ -44,6 +56,10 @@ export function beforeRender(delta) {
         smoothedEnergy = defaultBrightness;
     }
 
+    // Read potentiometer value and map it to select programs
+    var potValue = analogInputs[0];
+    selectedProgram = floor(potValue * 2); // Assuming we have 2 programs (0 and 1)
+
     // Manually increment elapsed time
     elapsedTime += delta;
     if (elapsedTime >= 60000) { // Reset after 60 seconds
@@ -52,14 +68,32 @@ export function beforeRender(delta) {
 
     // Change hue based on a sine wave over 1 minute
     if (cycleColor) {
-        var cycleTime = 600000; // 60 seconds in milliseconds
+        var cycleTime = 240000; // 60 seconds in milliseconds
         var timeFraction = elapsedTime / cycleTime;
         hue = 0.5 + 0.5 * sin(timeFraction * 2 * PI);
     }
+    
+   
+    // program heartbeat
+    // Current time in the beat cycle
+    var currentTime = time(timeFactor)
+    // Normalize time to a 0-1 range for a complete cycle
+    var phase = (currentTime % beatInterval) / beatInterval;
+    
+    // Calculate the brightness for each ring using sin and cos to create the phase offset
+    heartBrightness = (cos(phase * 2 * PI) + 1) / 2; // Cosine for inner ring
+    
+    
 }
 
 export function render(index) {
-    var brightness = smoothedEnergy;
-    hsv(hue, 1, brightness);
+    if (selectedProgram == 0) {
+        // Program 1: Audio reactive with color cycling
+        var brightness = smoothedEnergy;
+        hsv(hue, 1, brightness);
+    } else if (selectedProgram == 1) {
+        // Program 2: Static color at constant brightness
+        var constantBrightness = 0.5; // Adjust the constant brightness as desired
+        hsv(0.2, 1, heartBrightness);
+    }
 }
-
