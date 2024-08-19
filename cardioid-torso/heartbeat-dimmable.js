@@ -14,7 +14,7 @@ export var analogInputs;
 export var magenta = 0.2;
 export var globalHue = magenta; 
 // 1/0 setting for having the color change or be constant.
-export var cycleColor = false;
+export var cycleColor = true;
 
 
 // dual chest/back cardioid nest illumination
@@ -46,10 +46,8 @@ export function beforeRender(delta) {
     // Assign the dynamically calculated hue to a global variable to be used in render()
       globalHue = hue;
     }
-    var potentiometer_input = analogInputs[0];
-    // invert analog input b/c max resistance is all the way over to the left on dial
-    var bright_factor = 1.0 - potentiometer_input;
-
+    var bright_factor = analogInputs[0];
+   
     // GPT originally suggested Math.pow(bright_factor, gamma);, but htat function is not available on pixel 
     // Approximating a power function using multiples and square roots. Approximation for cube root
     var gammaCorrectedBrightness = bright_factor * sqrt(bright_factor); 
