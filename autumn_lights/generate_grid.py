@@ -1,6 +1,6 @@
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List, Tuple
 from pprint import pprint
 
 # values indicate order of wiring path. 0 is the starting point at 0,1. 
@@ -64,7 +64,6 @@ def create_metagrid(width: int, height: int):
             increment_size += SQUARE_SIZE
         if orientation == RIGHT_TO_LEFT:
                 meta_row = flip_grid_on_y(meta_row)
-        #metagrid.append(meta_row)
         append_meta_row(meta_grid, meta_row)
     return meta_grid
 
@@ -72,3 +71,25 @@ def create_metagrid(width: int, height: int):
 
 def three_by_two():
     pprint(create_metagrid(3, 2), width=200)
+
+
+def generate_physical_layout(width: int, height: int):
+    """Generate the physical layout of LEDs in order of the wiring."""
+    # Get the metagrid representing the wiring order
+    metagrid = create_metagrid(width, height)
+    
+    # Create a dictionary to store the (LED index, (x, y)) positions
+    physical_layout = {}
+    
+    # Iterate over the metagrid to calculate the physical positions
+    for y, row in enumerate(metagrid):
+        for x, led_index in enumerate(row):
+            # Calculate real-world coordinates (x, y)
+            real_x = x * GRID_CELL_SIZE
+            real_y = y * GRID_CELL_SIZE
+            physical_layout[led_index] = [real_x, real_y]
+    
+    # Sort by LED index to get the correct wiring order and return only the (x, y) coordinates
+    ordered_physical_layout = [coords for _, coords in sorted(physical_layout.items())]
+    
+    return ordered_physical_layout
