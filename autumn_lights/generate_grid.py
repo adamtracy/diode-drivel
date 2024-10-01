@@ -74,7 +74,8 @@ def three_by_two():
 
 
 def generate_physical_layout(width: int, height: int):
-    """Generate the physical layout of LEDs in order of the wiring."""
+    """Generate the physical layout of LEDs in order of the wiring.  Copy/paste 
+    this output into the pixel blaze mapper page"""
     # Get the metagrid representing the wiring order
     metagrid = create_metagrid(width, height)
     
