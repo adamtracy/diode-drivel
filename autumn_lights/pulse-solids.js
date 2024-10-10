@@ -24,17 +24,17 @@ var moduleColors = [
 var numColors = moduleColors.length;
 
 // Variable to track the current color shift
-var colorShift = 0;
+export var colorShift = 0;
 
 // Variable to track the previous value of the pulse
-var previousPulse = 0;
+export var previousPulse = 0;
 
 export function beforeRender(delta) {
     // Calculate the pulsing brightness value from the sine wave
-    var pulse = 0.3 + 0.2 * sin(time(0.1) * 2 * PI);  // Oscillates between 0.1 and 0.5
+    var pulse = 0.275 + 0.225 * sin(time(0.1) * 2 * PI);  // Oscillates between 0.05 and 0.5
 
     // Check if the pulse is transitioning from its lowest value (nadir)
-    if (previousPulse < 0.3 && pulse >= 0.3) {
+    if (previousPulse < 0.07 && pulse >= 0.07) {
         // Increment the color shift, cycling through the number of colors
         colorShift = (colorShift + 1) % numColors;
     }
@@ -54,8 +54,8 @@ export function render(index) {
     var hue = moduleColors[colorIndex][0];
     var saturation = moduleColors[colorIndex][1];
 
-    // Calculate pulsing brightness from 0.1 to 0.5
-    var pulse = 0.3 + 0.2 * sin(time(0.1) * 2 * PI);
+    // Calculate pulsing brightness from 0.05 to 0.5
+    var pulse = 0.275 + 0.225 * sin(time(0.1) * 2 * PI);
 
     // Set the color for the current LED with the pulsing brightness
     hsv(hue, saturation, pulse);
