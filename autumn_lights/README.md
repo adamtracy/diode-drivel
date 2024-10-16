@@ -9,7 +9,7 @@ performed by runing `./generate_grid.py 4,4`
 'https://github.com/adamtracy/diode-drivel/blob/main/autumn_lights/pulse-solids.js'
 
 ## this one as orientation
-'https://github.com/adamtracy/diode-drivel/blob/main/autumn_lights/orientation.js'
+'https://github.com/adamtracy/diode-drivel/blob/main/sixteen_squares/orientation.js'
 
 
 ## sequence looks like this:
