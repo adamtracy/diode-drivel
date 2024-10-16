@@ -1,62 +1,53 @@
-// We wont be able to use a typical pixel mapping approach available in the 'Blaze 
-// at the art show.  So this uses pixel index offset and good old render(index){}
-// to create a show of pulsing cubes.  
+var numGrids = 16;          // Total number of grids
+var ledsPerGrid = 36;       // Number of LEDs per grid (6x6)
+var numLEDs = numGrids * ledsPerGrid;  // Total number of LEDs
 
-// Number of LEDs per 6x6 module
-var moduleSize = 36;
-
-// Total number of modules
-var numModules = 16;
-
-// Colors to use for the modules (you can add more colors to this array)
-var moduleColors = [
-    [0.0, 1, 1],   // Red
-    [0.33, 1, 1],  // Green
-    [0.66, 1, 1],  // Blue
-    [0.1, 1, 1],   // Orange
-    [0.5, 1, 1],   // Cyan
-    [0.9, 1, 1],   // Pink
-    [0.25, 1, 1],  // Yellow
-    [0.75, 1, 1]   // Purple
+// Adjusted time offsets for each grid to be very close, promoting more synchronization
+var timeOffsets = [
+  0.10, 0.102, 0.104, 0.106,
+  0.108, 0.110, 0.112, 0.114,
+  0.116, 0.118, 0.120, 0.122,
+  0.124, 0.126, 0.128, 0.130
 ];
 
-// Number of colors in the array
-var numColors = moduleColors.length;
-
-// Variable to track the current color shift
-export var colorShift = 0;
-
-// Variable to track the previous value of the pulse
-export var previousPulse = 0;
+// Hard-coded colors for each grid (R, G, B values between 0 and 1)
+var gridColors = [
+  [1, 0, 0],    // Red
+  [0, 1, 0],    // Green
+  [0, 0, 1],    // Blue
+  [1, 1, 0],    // Yellow
+  [1, 0, 1],    // Magenta
+  [0, 1, 1],    // Cyan
+  [0.5, 0.5, 0],// Olive
+  [0.5, 0, 0.5],// Purple
+  [0.5, 1, 0.5],// Light Green
+  [1, 0.5, 0],  // Orange
+  [0, 0.5, 1],  // Sky Blue
+  [0.5, 0, 1],  // Violet
+  [0.5, 0.5, 1],// Light Blue
+  [1, 0.5, 0.5],// Light Red
+  [0.5, 1, 1],  // Aqua
+  [1, 1, 1]     // White
+];
 
 export function beforeRender(delta) {
-    // Calculate the pulsing brightness value from the sine wave
-    var pulse = 0.275 + 0.225 * sin(time(0.1) * 2 * PI);  // Oscillates between 0.05 and 0.5
-
-    // Check if the pulse is transitioning from its lowest value (nadir)
-    if (previousPulse < 0.07 && pulse >= 0.07) {
-        // Increment the color shift, cycling through the number of colors
-        colorShift = (colorShift + 1) % numColors;
-    }
-
-    // Update the previous pulse value for the next frame
-    previousPulse = pulse;
+  // No changes needed here; offsets remain constant
 }
 
 export function render(index) {
-    // Determine which module the current LED belongs to
-    var moduleIndex = floor(index / moduleSize);
+  // Determine the grid number for the current LED
+  var gridNumber = floor(index / ledsPerGrid);
+  
+  // Calculate the time-based pulse for the current grid using the constant offset
+  var phase = time(timeOffsets[gridNumber]);
+  var pulse = wave(phase);
 
-    // Calculate the color index for the current module, considering the color shift
-    var colorIndex = (moduleIndex + colorShift) % numColors;
+  // Use the pulse value to set the brightness of the base color
+  var baseColor = gridColors[gridNumber];
+  var r = baseColor[0] * pulse;
+  var g = baseColor[1] * pulse;
+  var b = baseColor[2] * pulse;
 
-    // Retrieve the color for this module
-    var hue = moduleColors[colorIndex][0];
-    var saturation = moduleColors[colorIndex][1];
-
-    // Calculate pulsing brightness from 0.05 to 0.5
-    var pulse = 0.275 + 0.225 * sin(time(0.1) * 2 * PI);
-
-    // Set the color for the current LED with the pulsing brightness
-    hsv(hue, saturation, pulse);
+  // Set the color of the current LED
+  rgb(r, g, b);
 }
