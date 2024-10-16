@@ -1,5 +1,13 @@
 # New Pixel Initialization
 
+## Settings
+1. Limit Brightness: 50
+2. LED Type WS2801
+3. Pixels 576
+4. Data Speed 1MHz
+6. Color ORder RGB
+7. CPU Speed 80MHz
+ 
 ## Create Map 
 performed by runing `./generate_grid.py 4,4`
 ```
